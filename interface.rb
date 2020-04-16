@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class Interface
-  INVALID_OPTION = 'It is not an option. Try again.'.freeze
-  FULL_HAND = 'You can\'t\' take more cards.'.freeze
-  BUSTED = 'Not enough money for a bet.'.freeze
-  DEALER_BUSTED = 'The casino loses.'.freeze
+  INVALID_OPTION = 'It is not an option. Try again.'
+  FULL_HAND = 'You can\'t\' take more cards.'
+  BUSTED = 'Not enough money for a bet.'
+  DEALER_BUSTED = 'The casino loses.'
 
   def self.ask_name
     p 'Your name?'
@@ -37,12 +37,12 @@ class Interface
     puts
   end
 
-  def show_results(player, dealer, winner = nil)
+  def show_results(_player, _dealer, winner = nil)
     if winner.nil?
       puts
       p 'Push!'
       puts
-      return
+      nil
     else
       puts
       p "Winner is #{winner.name}!"

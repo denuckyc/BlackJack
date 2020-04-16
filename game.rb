@@ -19,7 +19,7 @@ class Game
 
   def run
     @interface.main_menu(@player)
-    case @interface.choice 
+    case @interface.choice
     when 1 then start
     when 2 then abort('Exit from the game.')
     else @interface.invalid_option
@@ -31,12 +31,10 @@ class Game
 
   def start
     if @player.busted?
-      puts
       @interface.busted
       p 'GAME OVER'
       exit
     elsif @dealer.busted?
-      puts
       @interface.dealer_busted(@dealer)
       exit
     else
@@ -55,10 +53,8 @@ class Game
       @player.take_card(@deck)
       @dealer.take_card(@deck)
     end
-    puts
     p "Your cards: #{@player.show_cards}"
     p "Dealer's cards: #{@dealer.hide_cards}"
-    puts
     p "Your score is #{@player.score}"
   rescue RuntimeError => e
     @interface.show_error(e.message)

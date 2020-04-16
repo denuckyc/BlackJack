@@ -18,7 +18,7 @@ class Player
   def show_cards
     all_cards = ''
     @hand.cards.each { |card| all_cards = "#{all_cards} #{card.output}" }
-    all_cards.lstrip.gsub(/[♠♥♦♣]/){|s| "#{s} "}
+    all_cards.lstrip.gsub(/[♠♥♦♣]/) { |s| "#{s} " }
   end
 
   def discard

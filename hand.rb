@@ -27,7 +27,7 @@ class Hand
 
     points
   end
-  
+
   def discard
     @cards = []
   end
