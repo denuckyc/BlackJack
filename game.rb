@@ -81,7 +81,7 @@ class Game
     rescue RuntimeError => e
       @interface.show_error(e.message)
       retry
-    end while (@game_running == true) && (full_hand_check == false)
+    end while (@game_running == true) && (!full_hand_check)
   end
 
   def full_hand_check
