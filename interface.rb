@@ -76,11 +76,16 @@ class Interface
   end
 
   def dealer_hide_card(dealer)
+    p 'Dealer take a card.'
     p "Dealer's cards: #{dealer.hide_cards}"
   end
 
   def dealer_dicision
     p 'Dealer made his decision, he wait for your move'
+  end
+
+  def open_cards
+    p 'Scoring! Lay all cards on the table.'
   end
 
   def show_error(message)

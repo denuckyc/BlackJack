@@ -60,6 +60,9 @@ class Game
   def round
     init_deal
     decision
+    @interface.open_cards
+    @interface.dealer_score(@dealer)
+    @interface.player_score(@player)
     final_scoring
     @interface.reset_menu(@player)
     @interface.continue? ? flush_and_discard : @interface.exiting
@@ -78,7 +81,11 @@ class Game
     rescue RuntimeError => e
       @interface.show_error(e.message)
       retry
-    end while (@game_running == true)# || (@player.full_hand? && @dealer.full_hand? == false)
+    end while (@game_running == true) && (full_hand_check == false)
+  end
+
+  def full_hand_check
+    @player.full_hand? && @dealer.full_hand?
   end
 
   def dealer_decision
@@ -100,8 +107,6 @@ class Game
   end
 
   def opening_cards
-    @interface.dealer_score(@dealer)
-    @interface.player_score(@player)
     @game_running = false
   end
 
