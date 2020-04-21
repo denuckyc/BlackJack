@@ -21,7 +21,7 @@ class Game
     @interface.main_menu(@player)
     case @interface.choice
     when 1 then start
-    when 2 then abort('Exit from the game.')
+    when 2 then @interface.exiting
     else @interface.invalid_option
     end
   rescue RuntimeError => e
@@ -32,17 +32,14 @@ class Game
   def start
     if @player.busted?
       @interface.busted
-      p 'GAME OVER'
-      exit
+      @interface.game_over
+      @interface.exiting
     elsif @dealer.busted?
       @interface.dealer_busted(@dealer)
-      exit
+      @interface.exiting
     else
       @game_running = true
-      init_deal
-      decision
-      @interface.reset_menu(@player)
-      @interface.continue? ? flush_and_discard : exit
+      round
     end
   end
 
@@ -53,12 +50,19 @@ class Game
       @player.take_card(@deck)
       @dealer.take_card(@deck)
     end
-    p "Your cards: #{@player.show_cards}"
-    p "Dealer's cards: #{@dealer.hide_cards}"
-    p "Your score is #{@player.score}"
+    @interface.player_score(@player)
+    @interface.dealer_hide_card(@dealer)
   rescue RuntimeError => e
     @interface.show_error(e.message)
-    abort('Exit from the game.')
+    @interface.exiting
+  end
+
+  def round
+    init_deal
+    decision
+    final_scoring
+    @interface.reset_menu(@player)
+    @interface.continue? ? flush_and_discard : @interface.exiting
   end
 
   def decision
@@ -74,32 +78,30 @@ class Game
     rescue RuntimeError => e
       @interface.show_error(e.message)
       retry
-    end while @game_running == true
+    end while (@game_running == true)# || (@player.full_hand? && @dealer.full_hand? == false)
   end
 
   def dealer_decision
     if @dealer.can_take_card?
       @dealer.take_card(@deck)
-      p "Dealer took the card: #{@dealer.hide_cards}"
+      @interface.dealer_hide_card(@dealer)
     else
-      p 'Dealer made his decision, he wait for your move'
+      @interface.dealer_dicision
     end
   end
 
   def add_card
     if @player.can_take_card?
       @player.take_card(@deck)
-      p "Your cards:#{@player.show_cards} and score is #{@player.score}"
+      @interface.player_score(@player)
     else
       @interface.full_hand
     end
   end
 
   def opening_cards
-    puts
-    p "Dealer's cards: #{@dealer.show_cards}, score is #{@dealer.score}"
-    p "Your cards:#{@player.show_cards}, score is #{@player.score}"
-    final_scoring
+    @interface.dealer_score(@dealer)
+    @interface.player_score(@player)
     @game_running = false
   end
 

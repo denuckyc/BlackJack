@@ -4,7 +4,8 @@ class Interface
   INVALID_OPTION = 'It is not an option. Try again.'
   FULL_HAND = 'You can\'t\' take more cards.'
   BUSTED = 'Not enough money for a bet.'
-  DEALER_BUSTED = 'The casino loses.'
+  DEALER_BUSTED = 'The casino loses. You win all.'
+  GAME_OVER = 'GAME OVER'
 
   def self.ask_name
     p 'Your name?'
@@ -66,6 +67,22 @@ class Interface
     end
   end
 
+  def dealer_score(dealer)
+    p "Dealer's cards: #{dealer.show_cards}, score is #{dealer.score}"
+  end
+
+  def player_score(player)
+    p "Your cards: #{player.show_cards}, score is #{player.score}"
+  end
+
+  def dealer_hide_card(dealer)
+    p "Dealer's cards: #{dealer.hide_cards}"
+  end
+
+  def dealer_dicision
+    p 'Dealer made his decision, he wait for your move'
+  end
+
   def show_error(message)
     puts
     p "Error! #{message}"
@@ -89,8 +106,17 @@ class Interface
     raise INVALID_OPTION
   end
 
+  def game_over
+    raise GAME_OVER
+  end
+
   def player_with_balance(player)
     p "#{player.name}, you have #{player.balance}$"
     puts
+  end
+
+  def exiting
+    p 'Exit from the game.'
+    exit
   end
 end
