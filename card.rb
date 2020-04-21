@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Cards
+class Card
   attr_reader :value
 
   SUIT = { spades: '♠', hearts: '♥', diamonds: '♦', clubs: '♣' }.freeze

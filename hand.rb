@@ -18,7 +18,7 @@ class Hand
     aces = 0
     @cards.each do |card|
       aces += 1 if card.ace?
-      points += Cards::WEIGHTS[card.value]
+      points += Card::WEIGHTS[card.value]
     end
 
     (1..aces).each do
