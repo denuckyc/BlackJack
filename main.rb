@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+require_relative './deck.rb'
+require_relative './bank.rb'
+require_relative './dealer.rb'
 require_relative './interface.rb'
 require_relative './game.rb'
 
-Game.new(Interface.ask_name)
+Interface.new.main_menu

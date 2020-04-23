@@ -7,27 +7,99 @@ class Interface
   DEALER_BUSTED = 'The casino loses. You win all.'
   GAME_OVER = 'GAME OVER'
 
+  def initialize
+    @game = Game.new(Interface.ask_name)
+    @game_running = false
+  end
+
   def self.ask_name
     p 'Your name?'
     puts
     gets.chomp.capitalize
   end
 
-  def main_menu(player)
+  def main_menu
     puts
-    p "Welcome to Black Jack, #{player.name}!"
+    p "Welcome to Black Jack, #{@game.player.name}!"
     puts
-    player_with_balance(player)
+    player_with_balance
     puts
     p 'Enter \'1\' to play'
     p 'Enter \'2\' to quit'
     puts
+    p 'Your choice:'
+    run
   end
 
-  def choice
-    puts
-    p 'Your choice:'
-    gets.chomp.to_i
+  def run
+    case gets.chomp.to_i
+    when 1 then start
+    when 2 then exit
+    else raise INVALID_OPTION
+    end
+  rescue RuntimeError => e
+    show_error(e.message)
+    retry
+  end
+
+  def start
+    if @game.player.busted?
+      raise BUSTED
+      raise BUSTED
+      exit
+    elsif @game.dealer.busted?
+      raise DEALER_BUSTED
+      exit
+    else
+      @game_running = true
+      round
+    end
+  end
+
+  def round
+    @game.init_deal
+    player_score
+    dealer_hide_card
+    decision
+    open_cards
+    dealer_score
+    player_score
+    @game.final_scoring(show_results)
+    reset_menu
+    continue? ? @game.flush_and_discard && start : exit
+  end
+
+  def decision
+    begin
+      decision_menu
+      case gets.chomp.to_i
+      when 1 then dealer_decision
+      when 2 then add_card
+      when 3 then @game_running = false
+      else raise INVALID_OPTION
+      end
+    rescue RuntimeError => e
+      show_error(e.message)
+      retry
+    end while (@game_running == true) && !@game.full_hand_check
+  end
+
+  def dealer_decision
+    if @game.dealer.can_take_card?
+      @game.dealer_add_card
+      dealer_hide_card
+    else
+      dealer_decided
+    end
+  end
+
+  def add_card
+    if @game.player.can_take_card?
+      @game.player_add_card
+      player_score
+    else
+      FULL_HAND
+    end
   end
 
   def decision_menu
@@ -38,21 +110,21 @@ class Interface
     puts
   end
 
-  def show_results(_player, _dealer, winner = nil)
-    if winner.nil?
+  def show_results
+    if @game.define_winner.nil?
       puts
       p 'Push!'
       puts
       nil
     else
       puts
-      p "Winner is #{winner.name}!"
+      p "Winner is #{@game.define_winner.name}!"
       puts
     end
   end
 
-  def reset_menu(player)
-    player_with_balance(player)
+  def reset_menu
+    player_with_balance
     p 'Do you want to try again?'
     puts
     p 'Enter \'1\' if you want to continue'
@@ -60,27 +132,30 @@ class Interface
   end
 
   def continue?
-    case choice
+    case gets.chomp.to_i
     when 1 then true
     when 2 then false
-    else invalid_choice
+    else raise INVALID_OPTION
     end
+  rescue RuntimeError => e
+    show_error(e.message)
+    retry
   end
 
-  def dealer_score(dealer)
-    p "Dealer's cards: #{dealer.show_cards}, score is #{dealer.score}"
+  def dealer_score
+    p "Dealer's cards: #{@game.dealer.show_cards}, score is #{@game.dealer.score}"
   end
 
-  def player_score(player)
-    p "Your cards: #{player.show_cards}, score is #{player.score}"
+  def player_score
+    p "Your cards: #{@game.player.show_cards}, score is #{@game.player.score}"
   end
 
-  def dealer_hide_card(dealer)
+  def dealer_hide_card
     p 'Dealer take a card.'
-    p "Dealer's cards: #{dealer.hide_cards}"
+    p "Dealer's cards: #{@game.dealer.hide_cards}"
   end
 
-  def dealer_dicision
+  def dealer_decided
     p 'Dealer made his decision, he wait for your move'
   end
 
@@ -94,34 +169,13 @@ class Interface
     puts
   end
 
-  def full_hand
-    raise FULL_HAND
-  end
-
-  def busted
-    raise BUSTED
-  end
-
-  def dealer_busted(dealer)
-    p "#{dealer.name} have #{dealer.balance}$"
+  def dealer_busted
+    p "#{@game.dealer.name} have #{@game.dealer.balance}$"
     DEALER_BUSTED
   end
 
-  def invalid_option
-    raise INVALID_OPTION
-  end
-
-  def game_over
-    raise GAME_OVER
-  end
-
-  def player_with_balance(player)
-    p "#{player.name}, you have #{player.balance}$"
+  def player_with_balance
+    p "#{@game.player.name}, you have #{@game.player.balance}$"
     puts
-  end
-
-  def exiting
-    p 'Exit from the game.'
-    exit
   end
 end
